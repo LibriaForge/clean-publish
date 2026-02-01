@@ -10,7 +10,7 @@ export async function publish() {
 
     const currentHashFile = `${tmpDir}/.clean-publish.hash`;
     if (!(await fs.pathExists(currentHashFile))) {
-        throw new Error('No staged build found. Run `clnpb build` first.');
+        throw new Error('No staged build found. Run `lb-clean-publish build` first.');
     }
 
     const currentHash = (await fs.readFile(currentHashFile, 'utf-8')).trim();

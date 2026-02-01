@@ -1,7 +1,7 @@
 {
-  "name": "@libria/plugin-loader",
-  "version": "1.0.0",
-  "description": "Simple plugin loader for Node.js applications",
+  "name": "@libria/clean-publish",
+  "version": "0.1.0",
+  "description": "A CLI tool for publishing clean npm packages",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "exports": {
@@ -31,20 +31,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LibriaForge/plugin-loader.git"
+    "url": "git+https://github.com/LibriaForge/clean-publish.git"
   },
   "keywords": [
-    "plugin",
-    "loader",
-    "plugin loader",
+    "publish",
     "typescript"
   ],
   "author": "LibriaForge",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/LibriaForge/plugin-loader/issues"
+    "url": "https://github.com/LibriaForge/clean-publish/issues"
   },
-  "homepage": "https://github.com/LibriaForge/plugin-loader#readme",
+  "homepage": "https://github.com/LibriaForge/clean-publish#readme",
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.2",

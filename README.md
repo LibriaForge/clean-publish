@@ -1,227 +1,142 @@
-# @libria/plugin-loader
+# @libria/clean-publish
 
-A simple, type-safe plugin loader for Node.js applications. Supports both ESM and CommonJS plugins with glob pattern discovery.
+A CLI tool for publishing clean npm packages. Stage only the files you need, sanitize your `package.json`, and publish a minimal, production-ready package.
+
+## Why?
+
+When you publish a package to npm, you often include unnecessary files like tests, source code, configs, and development scripts. This tool lets you:
+
+- Copy only the files you want to publish (using glob patterns)
+- Remove `devDependencies`, `scripts`, and other fields from `package.json`
+- Preview what will be published before actually publishing
+- Skip publishing when nothing has changed (hash-based detection)
 
 ## Installation
 
 ```bash
-npm install @libria/plugin-loader
+npm install -D @libria/clean-publish
+```
+
+Or use it directly with npx:
+
+```bash
+npx lb-clean-publish <command>
 ```
 
 ## Quick Start
 
-### 1. Create a Plugin
+```bash
+# Initialize config file
+lb-clean-publish init
 
-Create a `plugin.json` manifest in your plugin directory:
+# Preview what will be staged
+lb-clean-publish dry-run
+
+# Stage files for publishing
+lb-clean-publish build
+
+# Publish to npm
+lb-clean-publish publish
+```
+
+## Commands
+
+| Command   | Description                                    |
+| --------- | ---------------------------------------------- |
+| `init`    | Create a `.clnpb.json` config file             |
+| `build`   | Stage files to temp directory and sanitize pkg |
+| `dry-run` | Preview matched files and package.json rules   |
+| `pack`    | Generate an npm tarball from staged files      |
+| `publish` | Publish staged files to npm registry           |
+
+## Configuration
+
+Create a `.clnpb.json` file in your project root (or run `lb-clean-publish init`):
 
 ```json
 {
-  "name": "my-plugin",
-  "pluginType": "greeting",
-  "module": "./dist/index.mjs"
-}
-```
-
-Create the plugin module:
-
-```typescript
-// src/index.ts
-import { definePlugin } from '@libria/plugin-loader';
-
-export default definePlugin('greeting', {
-  sayHello(name: string) {
-    return `Hello, ${name}!`;
+  "tmpDir": ".tmp-clean-publish",
+  "copy": [
+    "dist/**",
+    "README.md",
+    "LICENSE"
+  ],
+  "packageJson": {
+    "remove": {
+      "scripts": true,
+      "devDependencies": true
+    }
   }
-});
-```
-
-### 2. Load Plugins
-
-```typescript
-import { findPlugins, loadPlugin, loadAllPlugins } from '@libria/plugin-loader';
-
-// Load all plugins from a directory
-const plugins = await loadAllPlugins('./plugins', 'greeting');
-
-for (const plugin of plugins) {
-  console.log(plugin.api.sayHello('World'));
 }
 ```
 
-## API
+### Config Options
 
-### `definePlugin<T>(pluginType, api, name?)`
+#### `tmpDir`
 
-Helper function to create a type-safe plugin export.
+**Type:** `string`
 
-```typescript
-import { definePlugin } from '@libria/plugin-loader';
+Directory where files are staged before publishing.
 
-export default definePlugin('my-type', {
-  myMethod() {
-    return 'Hello!';
-  }
-});
-```
+#### `copy`
 
-### `findPlugins(pattern, pluginType?)`
+**Type:** `string[]`
 
-Discovers plugins by scanning directories for `plugin.json` manifests.
+Glob patterns for files to include in the published package. Uses [fast-glob](https://github.com/mrmlnc/fast-glob) syntax.
 
-```typescript
-import { findPlugins } from '@libria/plugin-loader';
+#### `packageJson`
 
-// Simple directory path (scans one level deep)
-const manifests = await findPlugins('./plugins');
+Rules for sanitizing `package.json`:
 
-// Glob pattern
-const manifests = await findPlugins('./plugins/*-plugin');
+| Option                        | Type       | Description                                   |
+| ----------------------------- | ---------- | --------------------------------------------- |
+| `remove.scripts`              | `boolean`  | Remove all scripts                            |
+| `remove.devDependencies`      | `boolean`  | Remove devDependencies                        |
+| `remove.optionalDependencies` | `boolean`  | Remove optionalDependencies                   |
+| `keepScripts`                 | `string[]` | Scripts to keep when `remove.scripts` is true |
+| `removeFields`                | `string[]` | Additional top-level fields to remove         |
 
-// Recursive glob
-const manifests = await findPlugins('./plugins/**/dist');
-
-// Filter by plugin type
-const manifests = await findPlugins('./plugins', 'greeting');
-```
-
-### `loadPlugin<T>(manifest)`
-
-Loads a single plugin from its manifest. Supports both ESM (`module`) and CommonJS (`main`) entry points.
-
-```typescript
-import { findPlugins, loadPlugin } from '@libria/plugin-loader';
-
-const [manifest] = await findPlugins('./plugins/my-plugin');
-const plugin = await loadPlugin<{ sayHello: (name: string) => string }>(manifest);
-
-console.log(plugin.api.sayHello('World'));
-```
-
-### `loadAllPlugins<T>(pattern, pluginType?)`
-
-Convenience function that combines `findPlugins` and `loadPlugin`. Discovers and loads all matching plugins.
-
-```typescript
-import { loadAllPlugins } from '@libria/plugin-loader';
-
-const plugins = await loadAllPlugins<{ greet: () => string }>(
-  './plugins/*-plugin',
-  'greeting'
-);
-
-for (const plugin of plugins) {
-  console.log(plugin.api.greet());
-}
-```
-
-## Plugin Manifest
-
-The `plugin.json` file defines plugin metadata:
-
-| Field        | Type   | Required | Description                          |
-|--------------|--------|----------|--------------------------------------|
-| `name`       | string | Yes      | Unique plugin identifier             |
-| `pluginType` | string | Yes      | Plugin category/type for filtering   |
-| `module`     | string | No       | ESM entry point (relative path)      |
-| `main`       | string | No       | CommonJS entry point (relative path) |
-| `types`      | string | No       | TypeScript declaration file          |
-
-At least one of `module` or `main` must be specified.
-
-### ESM Plugin Example
-
-```
-my-plugin/
-  plugin.json
-  dist/
-    index.mjs
-```
+### Example: Keep specific scripts
 
 ```json
 {
-  "name": "my-plugin",
-  "pluginType": "feature",
-  "module": "./dist/index.mjs"
-}
-```
-
-### CommonJS Plugin Example
-
-```
-my-plugin/
-  plugin.json
-  dist/
-    index.cjs
-```
-
-```json
-{
-  "name": "my-plugin",
-  "pluginType": "feature",
-  "main": "./dist/index.cjs"
-}
-```
-
-### Nested Manifest (dist folder)
-
-You can place `plugin.json` inside the `dist` folder and use glob patterns to discover it:
-
-```
-my-plugin/
-  dist/
-    plugin.json
-    index.mjs
-```
-
-```typescript
-// Discover plugins with manifest in dist/
-const plugins = await loadAllPlugins('./plugins/*/dist');
-```
-
-## Types
-
-### `LibriaPlugin<T>`
-
-```typescript
-interface LibriaPlugin<T = unknown> {
-  readonly pluginType: string;
-  readonly name?: string;
-  readonly api: T;
-}
-```
-
-### `PluginManifest`
-
-```typescript
-interface PluginManifest {
-  readonly name: string;
-  readonly pluginType: string;
-  readonly main?: string;
-  readonly module?: string;
-  readonly types?: string;
-  readonly __dir: string; // Resolved absolute path
-}
-```
-
-## Error Handling
-
-The library throws specific errors for common issues:
-
-- **`PluginLoadError`** - Failed to load the plugin module
-- **`PluginInvalidExportError`** - Plugin export is not a valid object
-- **`PluginTypeMismatchError`** - Plugin type doesn't match manifest
-
-```typescript
-import { loadPlugin, PluginTypeMismatchError } from '@libria/plugin-loader';
-
-try {
-  const plugin = await loadPlugin(manifest);
-} catch (error) {
-  if (error instanceof PluginTypeMismatchError) {
-    console.error(`Type mismatch: expected ${error.expected}, got ${error.actual}`);
+  "tmpDir": ".tmp-clean-publish",
+  "copy": ["dist/**", "README.md"],
+  "packageJson": {
+    "remove": {
+      "scripts": true,
+      "devDependencies": true
+    },
+    "keepScripts": ["postinstall"]
   }
 }
 ```
+
+### Example: Remove custom fields
+
+```json
+{
+  "tmpDir": ".tmp-clean-publish",
+  "copy": ["dist/**", "README.md"],
+  "packageJson": {
+    "remove": {
+      "scripts": true,
+      "devDependencies": true,
+      "optionalDependencies": true
+    },
+    "removeFields": ["prettier", "eslintConfig", "jest"]
+  }
+}
+```
+
+## Workflow
+
+1. **Build your project** - Compile TypeScript, bundle, etc.
+2. **Run `lb-clean-publish build`** - Stages files to temp directory
+3. **Run `lb-clean-publish pack`** (optional) - Creates a tarball to inspect
+4. **Run `lb-clean-publish publish`** - Publishes to npm
+
+The publish command automatically skips if nothing has changed since the last publish (using content hashing).
 
 ## License
 

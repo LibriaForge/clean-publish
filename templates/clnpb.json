@@ -9,6 +9,7 @@
     "remove": {
       "scripts": true,
       "devDependencies": true
-    }
+    },
+    "keepScripts": []
   }
 }
