@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { Command } from 'commander';
 import {build, dryRun, init, pack, publish} from "./commands";
 

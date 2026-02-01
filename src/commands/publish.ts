@@ -23,7 +23,11 @@ export async function publish() {
         return;
     }
 
-    await execa('npm', ['publish'], { cwd: tmpDir, stdio: 'inherit' });
+    const pkg = await fs.readJson(`${tmpDir}/package.json`);
+    const isScoped = pkg.name?.startsWith('@');
+
+    const args = isScoped ? ['publish', '--access', 'public'] : ['publish'];
+    await execa('npm', args, { cwd: tmpDir, stdio: 'inherit' });
 
     await fs.writeFile(LAST_HASH_FILE, currentHash);
     console.log('✅ Published successfully');
