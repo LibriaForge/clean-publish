@@ -1,0 +1,11 @@
+{
+  "name": "test-pkg",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsup",
+    "preinstall": "echo hi"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
