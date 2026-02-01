@@ -20,7 +20,7 @@ npm install -D @libria/clean-publish
 Or use it directly with npx:
 
 ```bash
-npx lb-clean-publish <command>
+npx @libria/clean-publish <command>
 ```
 
 ## Quick Start
