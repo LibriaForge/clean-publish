@@ -11,6 +11,10 @@ When you publish a package to npm, you often include unnecessary files like test
 - Preview what will be published before actually publishing
 - Skip publishing when nothing has changed (hash-based detection)
 
+
+![Version](https://img.shields.io/npm/v/@libria/clean-publish)
+![License](https://img.shields.io/npm/l/@libria/clean-publish)
+
 ## Installation
 
 ```bash
