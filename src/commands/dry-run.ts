@@ -1,8 +1,8 @@
-// src/commands/dryRun.ts
 import fg from 'fast-glob';
-import {loadConfig} from "../core";
 
-export async function dryRun() {
+import { loadConfig } from '../core';
+
+export async function dryRun(): Promise<void> {
     const config = await loadConfig();
     const files = await fg(config.copy, { dot: true, onlyFiles: true, unique: true });
 

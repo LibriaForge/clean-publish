@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+
 import type { ClnpbConfig } from '../types';
 
 export async function loadConfig(): Promise<ClnpbConfig> {
@@ -8,4 +9,3 @@ export async function loadConfig(): Promise<ClnpbConfig> {
     }
     return fs.readJson(file) as Promise<ClnpbConfig>;
 }
-

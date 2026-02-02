@@ -1,6 +1,9 @@
 import type { PackageJsonRules } from '../types';
 
-export function sanitizePackageJson(pkg: Record<string, unknown>, rules: PackageJsonRules) {
+export function sanitizePackageJson(
+    pkg: Record<string, unknown>,
+    rules: PackageJsonRules
+): Record<string, unknown> {
     const copy = structuredClone(pkg);
 
     if (rules.remove?.devDependencies) delete copy.devDependencies;
@@ -10,9 +13,7 @@ export function sanitizePackageJson(pkg: Record<string, unknown>, rules: Package
         if (rules.keepScripts?.length) {
             const scripts = (pkg.scripts || {}) as Record<string, string>;
             copy.scripts = Object.fromEntries(
-                Object.entries(scripts).filter(([k]) =>
-                    rules.keepScripts!.includes(k)
-                )
+                Object.entries(scripts).filter(([k]) => (rules.keepScripts || []).includes(k))
             );
         } else {
             delete copy.scripts;

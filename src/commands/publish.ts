@@ -1,11 +1,11 @@
-// src/commands/publish.ts
 import { execa } from 'execa';
 import fs from 'fs-extra';
-import { loadConfig } from "../core";
+
+import { loadConfig } from '../core';
 
 const LAST_HASH_FILE = '.clean-publish.last-hash';
 
-export async function publish() {
+export async function publish(): Promise<void> {
     const { tmpDir } = await loadConfig();
 
     const currentHashFile = `${tmpDir}/.clean-publish.hash`;
@@ -14,7 +14,7 @@ export async function publish() {
     }
 
     const currentHash = (await fs.readFile(currentHashFile, 'utf-8')).trim();
-    const previousHash = await fs.pathExists(LAST_HASH_FILE)
+    const previousHash = (await fs.pathExists(LAST_HASH_FILE))
         ? (await fs.readFile(LAST_HASH_FILE, 'utf-8')).trim()
         : null;
 

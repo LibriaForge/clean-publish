@@ -1,6 +1,7 @@
-// src/commands/init.ts
-import fs from 'fs-extra';
 import path from 'path';
+
+import fs from 'fs-extra';
+
 import type { ClnpbConfig } from '../types';
 
 const DEFAULT_CONFIG: ClnpbConfig = {
@@ -14,7 +15,7 @@ const DEFAULT_CONFIG: ClnpbConfig = {
     },
 };
 
-export async function init() {
+export async function init(): Promise<void> {
     const target = path.resolve('.clnpb.json');
 
     if (await fs.pathExists(target)) {

@@ -1,8 +1,8 @@
-// src/commands/build.ts
 import fs from 'fs-extra';
-import {computeHash, loadConfig, resetTmpDir, sanitizePackageJson, stageFiles} from "../core";
 
-export async function build() {
+import { computeHash, loadConfig, resetTmpDir, sanitizePackageJson, stageFiles } from '../core';
+
+export async function build(): Promise<void> {
     const config = await loadConfig();
     const tmpDir = config.tmpDir;
 

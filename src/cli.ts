@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import {build, dryRun, init, pack, publish} from "./commands";
+
+import { build, dryRun, init, pack, publish } from './commands';
 
 const program = new Command();
 

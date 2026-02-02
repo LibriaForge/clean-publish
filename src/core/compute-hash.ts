@@ -1,7 +1,8 @@
-import crypto from "node:crypto";
-import fs from "fs-extra";
+import crypto from 'node:crypto';
 
-export async function computeHash(files: string[], baseDir: string) {
+import fs from 'fs-extra';
+
+export async function computeHash(files: string[], baseDir: string): Promise<string> {
     const hash = crypto.createHash('sha256');
 
     for (const file of files.sort()) {

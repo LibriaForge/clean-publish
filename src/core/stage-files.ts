@@ -1,16 +1,14 @@
+import path from 'path';
+
 import fg from 'fast-glob';
 import fs from 'fs-extra';
-import path from 'path';
 
 export interface StageResult {
     files: string[];
     patterns: string[];
 }
 
-export async function stageFiles(
-    patterns: string[],
-    tmpDir: string
-): Promise<StageResult> {
+export async function stageFiles(patterns: string[], tmpDir: string): Promise<StageResult> {
     if (patterns.some(p => p.endsWith('/'))) {
         console.warn('⚠ Trailing slashes in glob patterns are ignored');
     }
@@ -18,7 +16,7 @@ export async function stageFiles(
     const files = await fg(patterns, {
         dot: true,
         onlyFiles: true,
-        unique: true
+        unique: true,
     });
 
     for (const file of files) {
