@@ -7,7 +7,7 @@ const program = new Command();
 program
     .name('clean-publish')
     .description('Publish clean npm packages from a staged directory')
-    .version('0.0.1');
+    .version('0.1.1');
 
 program.command('init').description('Create config file').action(init);
 program.command('build').description('Stage files and sanitize package.json').action(build);
