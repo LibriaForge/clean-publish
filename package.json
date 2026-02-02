@@ -1,6 +1,6 @@
 {
   "name": "@libria/clean-publish",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A CLI tool for publishing clean npm packages",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
