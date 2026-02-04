@@ -28,7 +28,7 @@
     "format": "prettier --write .",
     "test:coverage": "vitest --coverage",
     "clean": "npm run lint:fix && npm run format",
-    "build-and-publish": "npm run build && node .\\dist\\cli.cjs build && node .\\dist\\cli.cjs publish"
+    "build-and-publish": "npm run build && node ./dist/cli.mjs build && node ./dist/cli.mjs publish"
   },
   "repository": {
     "type": "git",
