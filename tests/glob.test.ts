@@ -1,13 +1,23 @@
 // tests/glob.test.ts
-import { describe, it, expect } from 'vitest';
+import {describe, it, expect, beforeEach, afterEach} from 'vitest';
 import fs from 'fs-extra';
-import {useTempProject} from "./helpers";
-import {build} from "../src/commands";
+import {useTempProject} from './helpers';
+import {build} from '../src';
 
 describe('glob support', () => {
-    it('copies only matching files', async () => {
-        await useTempProject('basic-project');
+    let cleanup: () => Promise<void>;
 
+    beforeEach(async () => {
+        // useTempProject already handles cwd change and cleanup
+        const temp = await useTempProject(undefined, 'config');
+        cleanup = temp.cleanup;
+    });
+
+    afterEach(async () => {
+        await cleanup();
+    });
+
+    it('copies only matching files', async () => {
         await fs.writeJson('.clnpb.json', {
             tmpDir: '.tmp',
             copy: ['dist/**', '!dist/**/*.map'],

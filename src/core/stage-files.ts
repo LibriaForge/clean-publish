@@ -8,21 +8,29 @@ export interface StageResult {
     patterns: string[];
 }
 
-export async function stageFiles(patterns: string[], tmpDir: string): Promise<StageResult> {
+export async function stageFiles(
+    patterns: string[],
+    tmpDir: string,
+    cwd: string = '.'
+): Promise<StageResult> {
     if (patterns.some(p => p.endsWith('/'))) {
         console.warn('⚠ Trailing slashes in glob patterns are ignored');
     }
 
     const files = await fg(patterns, {
+        cwd,
         dot: true,
         onlyFiles: true,
         unique: true,
     });
 
+    const resolvedTmpDir = path.join(cwd, tmpDir);
+
     for (const file of files) {
-        const dest = path.join(tmpDir, file);
+        const src = path.join(cwd, file);
+        const dest = path.join(resolvedTmpDir, file);
         await fs.ensureDir(path.dirname(dest));
-        await fs.copyFile(file, dest);
+        await fs.copyFile(src, dest);
     }
 
     return { files, patterns };

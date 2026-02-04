@@ -1,13 +1,23 @@
 // tests/package-json.test.ts
-import { describe, it, expect } from 'vitest';
+import {describe, it, expect, beforeEach, afterEach} from 'vitest';
 import fs from 'fs-extra';
-import { build } from '../src/commands';
+import { build } from '../src';
 import {useTempProject} from "./helpers";
 
 describe('package.json sanitization', () => {
-    it('removes devDependencies and scripts', async () => {
-        await useTempProject('basic-project');
+    let cleanup: () => Promise<void>;
 
+    beforeEach(async () => {
+        // useTempProject already handles cwd change and cleanup
+        const temp = await useTempProject(undefined, 'config');
+        cleanup = temp.cleanup;
+    });
+
+    afterEach(async () => {
+        await cleanup();
+    });
+
+    it('removes devDependencies and scripts', async () => {
         await fs.writeJson('.clnpb.json', {
             tmpDir: '.tmp',
             copy: ['dist/**'],
@@ -29,8 +39,6 @@ describe('package.json sanitization', () => {
     });
 
     it('keeps allowed scripts only', async () => {
-        await useTempProject('basic-project');
-
         await fs.writeJson('.clnpb.json', {
             tmpDir: '.tmp',
             copy: ['dist/**'],

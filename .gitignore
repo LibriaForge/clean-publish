@@ -146,3 +146,4 @@ vite.config.ts.timestamp-*
 .tmp/
 .tmp-clean-publish/
 .clean-publish.last-hash
+.aider*

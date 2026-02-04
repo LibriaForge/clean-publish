@@ -15,15 +15,24 @@ const DEFAULT_CONFIG: ClnpbConfig = {
     },
 };
 
-export async function init(): Promise<void> {
-    const target = path.resolve('.clnpb.json');
+async function initOne(cwd: string): Promise<void> {
+    const target = path.join(cwd, '.clnpb.json');
 
     if (await fs.pathExists(target)) {
-        console.error('❌ .clnpb.json already exists');
+        console.error(`❌ .clnpb.json already exists in ${cwd}`);
         process.exit(1);
     }
 
     await fs.writeJson(target, DEFAULT_CONFIG, { spaces: 2 });
 
-    console.log('✅ Created .clnpb.json');
+    console.log(`✅ Created ${target}`);
+}
+
+export async function init(paths: string[] = ['.']): Promise<void> {
+    for (const p of paths) {
+        if (paths.length > 1) {
+            console.log(`\n[${path.basename(path.resolve(p))}]`);
+        }
+        await initOne(p);
+    }
 }

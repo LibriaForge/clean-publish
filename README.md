@@ -49,6 +49,13 @@ lb-clean-publish publish
 | `pack`    | Generate an npm tarball from staged files      |
 | `publish` | Publish staged files to npm registry           |
 
+All commands accept optional paths to operate on multiple directories:
+
+```bash
+lb-clean-publish build projects/libA projects/libB
+lb-clean-publish publish projects/libA projects/libB
+```
+
 ## Configuration
 
 Create a `.clnpb.json` file in your project root (or run `lb-clean-publish init`):
@@ -137,6 +144,23 @@ Rules for sanitizing `package.json`:
 4. **Run `lb-clean-publish publish`** - Publishes to npm
 
 The publish command automatically skips if nothing has changed since the last publish (using content hashing).
+
+## Multi-Project Support
+
+You can run commands on multiple directories from a single location. Each directory should have its own `.clnpb.json` and `package.json`.
+
+```bash
+# Build multiple projects
+lb-clean-publish build projects/libA projects/libB projects/libC
+
+# Publish multiple projects
+lb-clean-publish publish projects/libA projects/libB
+
+# Preview a specific project
+lb-clean-publish dry-run projects/libA
+```
+
+This works with any project structure (monorepos, Angular libraries, etc.) without requiring workspace configuration.
 
 ## License
 
