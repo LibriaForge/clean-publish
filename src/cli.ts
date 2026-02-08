@@ -8,7 +8,7 @@ const program = new Command();
 program
     .name('clean-publish')
     .description('Publish clean npm packages from a staged directory')
-    .version('1.0.0');
+    .version('1.1.0');
 
 program
     .command('init [paths...]')
