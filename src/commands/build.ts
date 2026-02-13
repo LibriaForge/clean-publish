@@ -23,7 +23,7 @@ async function buildOne(cwd: string): Promise<void> {
     const cleanPkgPath = `${resolvedTmpDir}/package.json`;
     await fs.writeJson(cleanPkgPath, cleanPkg, { spaces: 2 });
 
-    const hash = await computeHash([...files, cleanPkgPath], resolvedTmpDir);
+    const hash = await computeHash([...files, 'package.json'], resolvedTmpDir);
     await fs.writeFile(`${resolvedTmpDir}/.clean-publish.hash`, hash);
 
     console.log(`✅ Staged ${files.length} files into ${resolvedTmpDir}`);

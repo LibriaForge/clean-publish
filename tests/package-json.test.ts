@@ -9,7 +9,7 @@ describe('package.json sanitization', () => {
 
     beforeEach(async () => {
         // useTempProject already handles cwd change and cleanup
-        const temp = await useTempProject(undefined, 'config');
+        const temp = await useTempProject('basic-project');
         cleanup = temp.cleanup;
     });
 
@@ -30,9 +30,7 @@ describe('package.json sanitization', () => {
         });
 
         await build();
-
         const pkg = await fs.readJson('.tmp/package.json');
-
         expect(pkg.devDependencies).toBeUndefined();
         expect(pkg.scripts).toBeUndefined();
         expect(pkg.name).toBe('test-pkg');
