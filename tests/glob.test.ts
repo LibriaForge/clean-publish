@@ -9,7 +9,7 @@ describe('glob support', () => {
 
     beforeEach(async () => {
         // useTempProject already handles cwd change and cleanup
-        const temp = await useTempProject(undefined, 'config');
+        const temp = await useTempProject('basic-project');
         cleanup = temp.cleanup;
     });
 
